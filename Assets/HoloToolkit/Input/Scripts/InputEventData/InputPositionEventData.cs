@@ -3,7 +3,12 @@
 
 using UnityEngine;
 using UnityEngine.EventSystems;
+#if UNITY_5
+using UnityEngine.VR.WSA.Input;
+#else
 using UnityEngine.XR.WSA.Input;
+#endif
+
 
 namespace HoloToolkit.Unity.InputModule
 {
@@ -18,7 +23,13 @@ namespace HoloToolkit.Unity.InputModule
         {
         }
 
-        public void Initialize(IInputSource inputSource, uint sourceId, InteractionSourcePressType pressType, Vector2 position, object tag = null)
+        public void Initialize(IInputSource inputSource, uint sourceId,
+#if UNITY_5
+            InteractionPressKind pressType,
+#else
+            InteractionSourcePressType pressType, 
+#endif
+            Vector2 position, object tag = null)
         {
             Initialize(inputSource, sourceId, tag, pressType);
             Position = position;

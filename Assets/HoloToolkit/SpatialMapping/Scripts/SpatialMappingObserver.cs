@@ -4,7 +4,12 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_5
+using UnityEngine.VR.WSA;
+#else
 using UnityEngine.XR.WSA;
+#endif
+
 
 namespace HoloToolkit.Unity.SpatialMapping
 {

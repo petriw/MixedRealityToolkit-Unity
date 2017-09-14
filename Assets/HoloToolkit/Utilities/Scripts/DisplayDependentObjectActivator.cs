@@ -2,7 +2,12 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using UnityEngine;
+#if UNITY_5
+using UnityEngine.VR.WSA;
+#else
 using UnityEngine.XR.WSA;
+#endif
+
 
 public class DisplayDependentObjectActivator : MonoBehaviour
 {

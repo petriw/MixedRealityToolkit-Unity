@@ -55,9 +55,14 @@ namespace HoloToolkit.Unity
 		{
 			QualityLevel = StartQualityLevel;
 
-			//Store our refreshrate
-			RefreshRate = (int)UnityEngine.XR.XRDevice.refreshRate;
-			if (RefreshRate == 0)
+            //Store our refreshrate
+#if UNITY_5
+            RefreshRate = (int)UnityEngine.VR.VRDevice.refreshRate;
+#else
+            RefreshRate = (int)UnityEngine.XR.XRDevice.refreshRate;
+#endif
+
+            if (RefreshRate == 0)
 			{
 				RefreshRate = 60;
 				if (!Application.isEditor)

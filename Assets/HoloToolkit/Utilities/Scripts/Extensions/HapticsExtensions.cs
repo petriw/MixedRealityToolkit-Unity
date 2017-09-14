@@ -2,7 +2,12 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 #if UNITY_WSA
-using UnityEngine.XR.WSA.Input;
+#if UNITY_5
+    using UnityEngine.VR.WSA.Input;
+#else
+    using UnityEngine.XR.WSA.Input;
+#endif
+
 #if !UNITY_EDITOR
 using System;
 using System.Collections.Generic;

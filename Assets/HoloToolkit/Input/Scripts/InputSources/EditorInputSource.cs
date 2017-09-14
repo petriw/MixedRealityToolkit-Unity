@@ -2,7 +2,12 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using UnityEngine;
+#if UNITY_5
+using UnityEngine.VR.WSA.Input;
+#else
 using UnityEngine.XR.WSA.Input;
+#endif
+
 
 namespace HoloToolkit.Unity.InputModule
 {
@@ -407,7 +412,12 @@ namespace HoloToolkit.Unity.InputModule
             {
                 if (CurrentButtonStates.IsSelectButtonDown)
                 {
-                    InputManager.Instance.RaiseSourceDown(this, controllerId, InteractionSourcePressType.Select);
+                    InputManager.Instance.RaiseSourceDown(this, controllerId,
+#if UNITY_5
+                            InteractionPressKind.Select);
+#else
+                            InteractionSourcePressType.Select);
+#endif
                 }
                 // New up presses require sending different events depending on whether it's also a click, hold, or manipulation.
                 else
@@ -427,9 +437,21 @@ namespace HoloToolkit.Unity.InputModule
                     else
                     {
                         // We currently only support single taps in editor.
-                        InputManager.Instance.RaiseInputClicked(this, controllerId, InteractionSourcePressType.Select, 1);
+                        InputManager.Instance.RaiseInputClicked(this, controllerId,
+#if UNITY_5
+                            InteractionPressKind.Select,
+#else
+                            InteractionSourcePressType.Select,
+#endif
+
+                            1);
                     }
-                    InputManager.Instance.RaiseSourceUp(this, controllerId, InteractionSourcePressType.Select);
+                    InputManager.Instance.RaiseSourceUp(this, controllerId,
+#if UNITY_5
+                            InteractionPressKind.Select);
+#else
+                            InteractionSourcePressType.Select);
+#endif
                 }
             }
             // If the select state hasn't changed, but it's down, that means it might
@@ -468,11 +490,21 @@ namespace HoloToolkit.Unity.InputModule
             {
                 if (CurrentButtonStates.IsMenuButtonDown)
                 {
-                    InputManager.Instance.RaiseSourceDown(this, controllerId, InteractionSourcePressType.Menu);
+                    InputManager.Instance.RaiseSourceDown(this, controllerId,
+#if UNITY_5
+                            InteractionPressKind.Menu);
+#else
+                            InteractionSourcePressType.Menu);
+#endif
                 }
                 else
                 {
-                    InputManager.Instance.RaiseSourceUp(this, controllerId, InteractionSourcePressType.Menu);
+                    InputManager.Instance.RaiseSourceUp(this, controllerId,
+#if UNITY_5
+                            InteractionPressKind.Menu);
+#else
+                            InteractionSourcePressType.Menu);
+#endif
                 }
             }
 
@@ -480,11 +512,21 @@ namespace HoloToolkit.Unity.InputModule
             {
                 if (CurrentButtonStates.IsGrasped)
                 {
-                    InputManager.Instance.RaiseSourceDown(this, controllerId, InteractionSourcePressType.Grasp);
+                    InputManager.Instance.RaiseSourceDown(this, controllerId,
+#if UNITY_5
+                            InteractionPressKind.Grasp);
+#else
+                            InteractionSourcePressType.Grasp);
+#endif
                 }
                 else
                 {
-                    InputManager.Instance.RaiseSourceUp(this, controllerId, InteractionSourcePressType.Grasp);
+                    InputManager.Instance.RaiseSourceUp(this, controllerId,
+#if UNITY_5
+                            InteractionPressKind.Grasp);
+#else
+                            InteractionSourcePressType.Grasp);
+#endif
                 }
             }
         }

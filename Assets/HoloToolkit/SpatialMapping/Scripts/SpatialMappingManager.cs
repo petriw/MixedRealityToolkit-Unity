@@ -207,9 +207,14 @@ namespace HoloToolkit.Unity.SpatialMapping
         {
 #if UNITY_EDITOR || UNITY_UWP
             // Allow observering if a device is present (Holographic Remoting)
-            if (!UnityEngine.XR.XRDevice.isPresent) return;
+#if UNITY_5
+            if (!UnityEngine.VR.VRDevice.isPresent)
+#else
+            if (!UnityEngine.XR.XRDevice.isPresent)
 #endif
-            if (!IsObserverRunning())
+                return;
+#endif
+                if (!IsObserverRunning())
             {
                 surfaceObserver.StartObserving();
                 StartTime = Time.unscaledTime;
@@ -223,7 +228,12 @@ namespace HoloToolkit.Unity.SpatialMapping
         {
 #if UNITY_EDITOR || UNITY_UWP
             // Allow observering if a device is present (Holographic Remoting)
-            if (!UnityEngine.XR.XRDevice.isPresent) return;
+#if UNITY_5
+            if (!UnityEngine.VR.VRDevice.isPresent)
+#else
+            if (!UnityEngine.XR.XRDevice.isPresent)
+#endif
+                return;
 #endif
             if (IsObserverRunning())
             {

@@ -4,8 +4,15 @@
 using HoloToolkit.Unity.SpatialMapping;
 using System.Collections.Generic;
 using UnityEngine;
+
+#if UNITY_5
+using UnityEngine.VR.WSA;
+using UnityEngine.VR.WSA.Persistence;
+#else
 using UnityEngine.XR.WSA;
 using UnityEngine.XR.WSA.Persistence;
+#endif
+
 
 namespace HoloToolkit.Unity
 {

@@ -50,7 +50,11 @@ namespace HoloToolkit.Unity.SharingWithUNET
         // Use this for initialization
         void Start()
         {
+#if UNITY_5
+            isOpaque = UnityEngine.VR.WSA.HolographicSettings.IsDisplayOpaque;
+#else
             isOpaque = UnityEngine.XR.WSA.HolographicSettings.IsDisplayOpaque;
+#endif
             transform.SetParent(SharedCollection.Instance.transform, true);
             if (isServer)
             {

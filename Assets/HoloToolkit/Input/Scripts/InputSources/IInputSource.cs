@@ -3,7 +3,12 @@
 
 using System;
 using UnityEngine;
+#if UNITY_5
+using UnityEngine.VR.WSA.Input;
+#else
 using UnityEngine.XR.WSA.Input;
+#endif
+
 
 namespace HoloToolkit.Unity.InputModule
 {

@@ -3,7 +3,12 @@
 
 using System;
 using UnityEngine;
+#if UNITY_5
+using UnityEngine.VR.WSA.Input;
+#else
 using UnityEngine.XR.WSA.Input;
+#endif
+
 
 namespace HoloToolkit.Unity.InputModule
 {
@@ -83,7 +88,12 @@ namespace HoloToolkit.Unity.InputModule
             // TODO: Should this handle Submit from Edit > ProjectSettings > Input ?
             if (Input.GetButtonDown(GamePadButtonA))
             {
-                inputManager.RaiseSourceDown(this, GamePadId, InteractionSourcePressType.Select);
+                inputManager.RaiseSourceDown(this, GamePadId,
+#if UNITY_5
+                    InteractionPressKind.Select);
+#else
+                    InteractionSourcePressType.Select);
+#endif
                 isAPressed = true;
                 navigationCompleted = false;
                 currentGestureState = GestureState.APressed;
@@ -150,7 +160,12 @@ namespace HoloToolkit.Unity.InputModule
         {
             if (Input.GetButtonUp(GamePadButtonA))
             {
-                inputManager.RaiseSourceUp(this, GamePadId, InteractionSourcePressType.Select);
+                inputManager.RaiseSourceUp(this, GamePadId,
+#if UNITY_5
+                    InteractionPressKind.Select);
+#else
+                    InteractionSourcePressType.Select);
+#endif
 
                 switch (currentGestureState)
                 {
@@ -180,7 +195,13 @@ namespace HoloToolkit.Unity.InputModule
                         CancelInvoke("HandleHoldStarted");
                         CancelInvoke("HandleHoldCompleted");
                         Debug.Log("Gamepad: Tap");
-                        inputManager.RaiseInputClicked(this, GamePadId, InteractionSourcePressType.Select, 1);
+                        inputManager.RaiseInputClicked(this, GamePadId,
+#if UNITY_5
+                    InteractionPressKind.Select,
+#else
+                    InteractionSourcePressType.Select,
+#endif
+                        1);
                         Reset();
                         break;
                 }

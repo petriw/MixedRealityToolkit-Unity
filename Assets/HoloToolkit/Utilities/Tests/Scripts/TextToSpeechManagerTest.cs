@@ -5,7 +5,12 @@ using HoloToolkit.Unity;
 using HoloToolkit.Unity.InputModule;
 using System;
 using UnityEngine;
-using UnityEngine.XR.WSA.Input;
+#if UNITY_5
+using UnityEngine.VR.WSA;
+#else
+using UnityEngine.XR.WSA;
+#endif
+
 
 public class TextToSpeechManagerTest : MonoBehaviour, IInputHandler
 {
@@ -53,7 +58,12 @@ public class TextToSpeechManagerTest : MonoBehaviour, IInputHandler
 
     void IInputHandler.OnInputUp(InputEventData eventData)
     {
-        if (eventData.PressType == InteractionSourcePressType.Select)
+        if (eventData.PressType ==
+#if UNITY_5
+            UnityEngine.VR.WSA.Input.InteractionPressKind.Select)
+#else
+            InteractionSourcePressType.Select)
+#endif
         {
             GameObject obj = FocusManager.Instance.TryGetFocusedObject(eventData);
 

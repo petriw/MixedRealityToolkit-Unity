@@ -108,8 +108,15 @@ namespace GLTF
 				mat.GetColumn(2).magnitude
 			);
 
-			rotation = mat.rotation;
-		}
+#if UNITY_5
+            rotation = Quaternion.LookRotation(
+                mat.GetColumn(2),
+                mat.GetColumn(1));
+#else
+            rotation = mat.rotation;
+#endif
+
+        }
 
 		public static Node Deserialize(GLTFRoot root, JsonReader reader)
 		{

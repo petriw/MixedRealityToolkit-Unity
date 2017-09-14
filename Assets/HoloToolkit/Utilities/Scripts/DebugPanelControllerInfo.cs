@@ -4,7 +4,12 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_5
+using UnityEngine.VR.WSA.Input;
+#else
 using UnityEngine.XR.WSA.Input;
+#endif
+
 
 namespace HoloToolkit.Unity
 {
@@ -34,12 +39,19 @@ namespace HoloToolkit.Unity
         {
             controllers = new Dictionary<uint, ControllerState>();
 
-#if UNITY_WSA
+            #if UNITY_WSA
+#if UNITY_5
+            InteractionManager.SourceDetected += InteractionManager_InteractionSourceDetected;
+
+            InteractionManager.SourceLost += InteractionManager_InteractionSourceLost;
+            InteractionManager.SourceUpdated += InteractionManager_InteractionSourceUpdated;
+#else
             InteractionManager.InteractionSourceDetected += InteractionManager_InteractionSourceDetected;
 
             InteractionManager.InteractionSourceLost += InteractionManager_InteractionSourceLost;
             InteractionManager.InteractionSourceUpdated += InteractionManager_InteractionSourceUpdated;
 #endif
+            #endif
         }
 
         private void Start()
@@ -50,42 +62,87 @@ namespace HoloToolkit.Unity
             }
         }
 
+#if UNITY_5
+        private void InteractionManager_InteractionSourceDetected(InteractionManager.SourceEventArgs obj)
+#else
         private void InteractionManager_InteractionSourceDetected(InteractionSourceDetectedEventArgs obj)
+#endif
         {
-            Debug.LogFormat("{0} {1} Detected", obj.state.source.handedness, obj.state.source.kind);
+            Debug.LogFormat("{0} {1} Detected", obj.state.source.handedness,
+#if UNITY_5
+                obj.state.source.sourceKind);
+#else
+                obj.state.source.kind);
+#endif
 
-            if (obj.state.source.kind == InteractionSourceKind.Controller && !controllers.ContainsKey(obj.state.source.id))
+            if (
+#if UNITY_5
+                obj.state.source.sourceKind == InteractionSourceKind.Controller &&
+#else
+                obj.state.source.kind == InteractionSourceKind.Controller && 
+#endif
+                !controllers.ContainsKey(obj.state.source.id))
             {
                 controllers.Add(obj.state.source.id, new ControllerState { Handedness = obj.state.source.handedness });
             }
         }
 
+#if UNITY_5
+        private void InteractionManager_InteractionSourceLost(InteractionManager.SourceEventArgs obj)
+#else
         private void InteractionManager_InteractionSourceLost(InteractionSourceLostEventArgs obj)
+#endif
         {
-            Debug.LogFormat("{0} {1} Lost", obj.state.source.handedness, obj.state.source.kind);
+            Debug.LogFormat("{0} {1} Lost", obj.state.source.handedness,
+#if UNITY_5
+                obj.state.source.sourceKind);
+#else
+                obj.state.source.kind);
+#endif
 
             controllers.Remove(obj.state.source.id);
         }
 
+#if UNITY_5
+        private void InteractionManager_InteractionSourceUpdated(InteractionManager.SourceEventArgs obj)
+#else
         private void InteractionManager_InteractionSourceUpdated(InteractionSourceUpdatedEventArgs obj)
+#endif
         {
             ControllerState controllerState;
             if (controllers.TryGetValue(obj.state.source.id, out controllerState))
             {
+#if UNITY_5
+                obj.state.sourcePose.TryGetPointerPosition(out controllerState.PointerPosition);
+                obj.state.sourcePose.TryGetPointerRotation(out controllerState.PointerRotation);
+                obj.state.sourcePose.TryGetPosition(out controllerState.GripPosition);
+                obj.state.sourcePose.TryGetRotation(out controllerState.GripRotation);
+
+#else
                 obj.state.sourcePose.TryGetPosition(out controllerState.PointerPosition, InteractionSourceNode.Pointer);
                 obj.state.sourcePose.TryGetRotation(out controllerState.PointerRotation, InteractionSourceNode.Pointer);
                 obj.state.sourcePose.TryGetPosition(out controllerState.GripPosition, InteractionSourceNode.Grip);
                 obj.state.sourcePose.TryGetRotation(out controllerState.GripRotation, InteractionSourceNode.Grip);
+#endif
 
                 controllerState.Grasped = obj.state.grasped;
                 controllerState.MenuPressed = obj.state.menuPressed;
                 controllerState.SelectPressed = obj.state.selectPressed;
+#if UNITY_5
+                controllerState.SelectPressedAmount = (float)obj.state.selectPressedValue;
+                controllerState.ThumbstickPressed = obj.state.controllerProperties.thumbstickPressed;
+                controllerState.ThumbstickPosition = new Vector2((float)obj.state.controllerProperties.thumbstickX, (float)obj.state.controllerProperties.thumbstickY);
+                controllerState.TouchpadPressed = obj.state.controllerProperties.touchpadPressed;
+                controllerState.TouchpadTouched = obj.state.controllerProperties.touchpadTouched;
+                controllerState.TouchpadPosition = new Vector2((float)obj.state.controllerProperties.touchpadX, (float)obj.state.controllerProperties.touchpadY);
+#else
                 controllerState.SelectPressedAmount = obj.state.selectPressedAmount;
                 controllerState.ThumbstickPressed = obj.state.thumbstickPressed;
                 controllerState.ThumbstickPosition = obj.state.thumbstickPosition;
                 controllerState.TouchpadPressed = obj.state.touchpadPressed;
                 controllerState.TouchpadTouched = obj.state.touchpadTouched;
                 controllerState.TouchpadPosition = obj.state.touchpadPosition;
+#endif
             }
         }
 

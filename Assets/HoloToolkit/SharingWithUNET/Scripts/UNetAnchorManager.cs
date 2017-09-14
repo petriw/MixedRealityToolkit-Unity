@@ -6,9 +6,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
 using UnityEngine.Networking;
+#if UNITY_5
+using UnityEngine.VR.WSA;
+using UnityEngine.VR.WSA.Persistence;
+using UnityEngine.VR.WSA.Sharing;
+#else
 using UnityEngine.XR.WSA;
 using UnityEngine.XR.WSA.Persistence;
 using UnityEngine.XR.WSA.Sharing;
+#endif
 
 namespace HoloToolkit.Unity.SharingWithUNET
 {

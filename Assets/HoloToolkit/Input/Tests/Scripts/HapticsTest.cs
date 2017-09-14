@@ -3,7 +3,12 @@
 
 using HoloToolkit.Unity.InputModule;
 using UnityEngine;
+#if UNITY_5
+using UnityEngine.VR.WSA.Input;
+#else
 using UnityEngine.XR.WSA.Input;
+#endif
+
 
 namespace HoloToolkit.Unity.Tests
 {
@@ -17,10 +22,18 @@ namespace HoloToolkit.Unity.Tests
             {
                 switch (eventData.PressType)
                 {
+#if UNITY_5
+                    case InteractionPressKind.Grasp:
+#else
                     case InteractionSourcePressType.Grasp:
+#endif
                         inputSource.StartHaptics(eventData.SourceId, 1.0f);
                         return;
+#if UNITY_5
+                    case InteractionPressKind.Menu:
+#else
                     case InteractionSourcePressType.Menu:
+#endif
                         inputSource.StartHaptics(eventData.SourceId, 1.0f, 1.0f);
                         return;
                 }
@@ -32,7 +45,11 @@ namespace HoloToolkit.Unity.Tests
             InteractionSourceInputSource inputSource = eventData.InputSource as InteractionSourceInputSource;
             if (inputSource != null)
             {
+#if UNITY_5
+                if (eventData.PressType == InteractionPressKind.Grasp)
+#else
                 if (eventData.PressType == InteractionSourcePressType.Grasp)
+#endif
                 {
                     inputSource.StopHaptics(eventData.SourceId);
                 }

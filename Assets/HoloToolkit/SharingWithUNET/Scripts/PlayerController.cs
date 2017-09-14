@@ -274,7 +274,11 @@ namespace HoloToolkit.Unity.SharingWithUNET
                 Debug.LogFormat("Set local player name {0} ip {1}", networkDiscovery.broadcastData, networkDiscovery.LocalIp);
                 CmdSetPlayerName(networkDiscovery.broadcastData);
                 CmdSetPlayerIp(networkDiscovery.LocalIp);
+#if UNITY_5
+                bool opaqueDisplay = UnityEngine.VR.WSA.HolographicSettings.IsDisplayOpaque;
+#else
                 bool opaqueDisplay = UnityEngine.XR.WSA.HolographicSettings.IsDisplayOpaque;
+#endif
                 Debug.LogFormat("local player {0} share anchors ", (opaqueDisplay ? "does not" : "does"));
                 CmdSetCanShareAnchors(!opaqueDisplay);
             }

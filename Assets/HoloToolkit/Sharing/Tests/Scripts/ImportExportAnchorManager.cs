@@ -8,9 +8,15 @@ using HoloToolkit.Unity;
 
 #if UNITY_WSA && !UNITY_EDITOR
 using System.Collections.Generic;
+#if UNITY_5
+using UnityEngine.VR.WSA;
+using UnityEngine.VR.WSA.Persistence;
+using UnityEngine.VR.WSA.Sharing;
+#else
 using UnityEngine.XR.WSA;
 using UnityEngine.XR.WSA.Persistence;
 using UnityEngine.XR.WSA.Sharing;
+#endif
 #endif
 
 namespace HoloToolkit.Sharing.Tests
@@ -203,7 +209,7 @@ namespace HoloToolkit.Sharing.Tests
         /// </summary>
         private RoomManagerAdapter roomManagerListener;
 
-        #region Untiy APIs
+#region Untiy APIs
 
         protected override void Awake()
         {
@@ -302,9 +308,9 @@ namespace HoloToolkit.Sharing.Tests
             base.OnDestroy();
         }
 
-        #endregion
+#endregion
 
-        #region Event Callbacks
+#region Event Callbacks
 
         /// <summary>
         /// Called when the sharing stage connects to a server.
@@ -471,7 +477,7 @@ namespace HoloToolkit.Sharing.Tests
             ResetState();
         }
 
-        #endregion
+#endregion
 
         /// <summary>
         /// Resets the Anchor Manager state.
@@ -614,7 +620,7 @@ namespace HoloToolkit.Sharing.Tests
                 AnchorDebugText.text += string.Format("\n{0} anchors found.", anchorCount.ToString());
             }
 
-#if UNITY_WSA && !UNITY_EDITOR
+#if UNITY_WSA && !UNITY_EDITOR && ENABLE_WINMD_SUPPORT
 
             // If there are anchors, we should attach to the first one.
             if (anchorCount > 0)
@@ -653,9 +659,9 @@ namespace HoloToolkit.Sharing.Tests
 #endif
         }
 
-        #region WSA Specific Methods
+#region WSA Specific Methods
 
-#if UNITY_WSA && !UNITY_EDITOR
+#if UNITY_WSA && !UNITY_EDITOR && ENABLE_WINMD_SUPPORT
 
         /// <summary>
         /// Kicks off getting the datablob required to import the shared anchor.
@@ -963,6 +969,6 @@ namespace HoloToolkit.Sharing.Tests
         }
 
 #endif // UNITY_WSA
-        #endregion // WSA Specific Methods
+#endregion // WSA Specific Methods
     }
 }

@@ -2,7 +2,11 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using UnityEngine;
-using UnityEngine.XR.WSA.Input;
+#if UNITY_5
+    using UnityEngine.VR.WSA.Input;
+#else
+    using UnityEngine.XR.WSA.Input;
+#endif
 
 namespace HoloToolkit.Examples.SpatialMappingComponent
 {
@@ -17,13 +21,21 @@ namespace HoloToolkit.Examples.SpatialMappingComponent
         {
             recognizer = new GestureRecognizer();
             recognizer.SetRecognizableGestures(GestureSettings.Tap);
+#if UNITY_5
+            recognizer.TappedEvent += Recognizer_Tapped;
+#else
             recognizer.Tapped += Recognizer_Tapped;
+#endif
             recognizer.StartCapturingGestures();
         }
 
         private void OnDestroy()
         {
+#if UNITY_5
+            recognizer.TappedEvent -= Recognizer_Tapped;
+#else
             recognizer.Tapped -= Recognizer_Tapped;
+#endif
         }
 
         private void Recognizer_Tapped(TappedEventArgs obj)

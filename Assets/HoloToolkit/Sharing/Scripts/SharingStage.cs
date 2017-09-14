@@ -297,7 +297,7 @@ namespace HoloToolkit.Sharing
 
             using (var userName = new XString(DefaultUserName))
             {
-#if UNITY_WSA && !UNITY_EDITOR
+#if UNITY_WSA && !UNITY_EDITOR && ENABLE_WINMD_SUPPORT
                 Manager.SetUserName(SystemInfo.deviceName);
 #else
                 if (!string.IsNullOrEmpty(Environment.UserName))

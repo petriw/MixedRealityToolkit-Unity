@@ -51,15 +51,23 @@ namespace HoloToolkit.Unity
 			{
 				qualityController.QualityChanged -= QualityChangedEvent;
 			}
-			UnityEngine.XR.XRSettings.renderViewportScale = 1.0f;
-		}
+#if UNITY_5
+            UnityEngine.VR.VRSettings.renderViewportScale = 1.0f;
+#else
+            UnityEngine.XR.XRSettings.renderViewportScale = 1.0f;
+#endif
+        }
 
 		protected void OnPreCull()
 		{
-			UnityEngine.XR.XRSettings.renderViewportScale = CurrentScale;
-		}
+#if UNITY_5
+            UnityEngine.VR.VRSettings.renderViewportScale = CurrentScale;
+#else
+            UnityEngine.XR.XRSettings.renderViewportScale = CurrentScale;
+#endif
+        }
 
-		private void QualityChangedEvent(int newQuality, int previousQuality)
+        private void QualityChangedEvent(int newQuality, int previousQuality)
 		{
 			SetScaleFromQuality(newQuality);
 		}

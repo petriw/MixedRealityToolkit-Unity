@@ -42,8 +42,14 @@ namespace HoloToolkit.Unity.SharingWithUNET
 
         private void Start()
         {
+#if UNITY_5
+            var isOpaque = UnityEngine.VR.WSA.HolographicSettings.IsDisplayOpaque;
+#else
+            var isOpaque = UnityEngine.XR.WSA.HolographicSettings.IsDisplayOpaque;
+#endif
+
             // On the immersive device the UI is best placed a little closer than on a HoloLens
-            if (UnityEngine.XR.WSA.HolographicSettings.IsDisplayOpaque == true)
+            if (isOpaque == true)
             {
                 gameObject.GetComponent<SimpleTagalong>().TagalongDistance = 1;
             }

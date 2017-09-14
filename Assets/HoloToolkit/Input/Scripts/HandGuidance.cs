@@ -2,7 +2,11 @@
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
 using UnityEngine;
+#if UNITY_5
+using UnityEngine.VR.WSA.Input;
+#else
 using UnityEngine.XR.WSA.Input;
+#endif
 
 namespace HoloToolkit.Unity.InputModule
 {
@@ -54,9 +58,15 @@ namespace HoloToolkit.Unity.InputModule
 
             // Register for hand and finger events to know where your hand
             // is being tracked and what state it is in.
+#if UNITY_5
+            InteractionManager.SourceLost += InteractionManager_InteractionSourceLost;
+            InteractionManager.SourceUpdated += InteractionManager_InteractionSourceUpdated;
+            InteractionManager.SourceReleased += InteractionManager_InteractionSourceReleased;
+#else
             InteractionManager.InteractionSourceLost += InteractionManager_InteractionSourceLost;
             InteractionManager.InteractionSourceUpdated += InteractionManager_InteractionSourceUpdated;
             InteractionManager.InteractionSourceReleased += InteractionManager_InteractionSourceReleased;
+#endif
         }
 
         private void ShowHandGuidanceIndicator(InteractionSourceState hand)
@@ -104,14 +114,26 @@ namespace HoloToolkit.Unity.InputModule
             rotation = Quaternion.LookRotation(Camera.main.transform.forward, hand.properties.sourceLossMitigationDirection);
         }
 
+#if UNITY_5
+        private void InteractionManager_InteractionSourceUpdated(InteractionManager.SourceEventArgs obj)
+#else
         private void InteractionManager_InteractionSourceUpdated(InteractionSourceUpdatedEventArgs obj)
+#endif
         {
+#if UNITY_5
+            if (obj.state.source.sourceKind == InteractionSourceKind.Hand)
+#else
             if (obj.state.source.kind == InteractionSourceKind.Hand)
+#endif
             {
                 InteractionSourceState hand = obj.state;
 
                 // Only display hand indicators when we are in a holding state, since hands going out of view will affect any active gestures.
+#if UNITY_5
+                if (!hand.pressed)
+#else
                 if (!hand.anyPressed)
+#endif
                 {
                     return;
                 }
@@ -139,18 +161,36 @@ namespace HoloToolkit.Unity.InputModule
             }
         }
 
+#if UNITY_5
+        private void InteractionManager_InteractionSourceReleased(InteractionManager.SourceEventArgs obj)
+
+#else
         private void InteractionManager_InteractionSourceReleased(InteractionSourceReleasedEventArgs obj)
-        {
+#endif
+        { 
+#if UNITY_5
+            if (obj.state.source.sourceKind == InteractionSourceKind.Hand)
+#else
             if (obj.state.source.kind == InteractionSourceKind.Hand)
+#endif
             {
                 // Stop displaying the guidance indicator when the user releases their finger from the pressed state.
                 RemoveTrackedHand(obj.state);
             }
         }
 
+#if UNITY_5
+        private void InteractionManager_InteractionSourceLost(InteractionManager.SourceEventArgs obj)
+
+#else
         private void InteractionManager_InteractionSourceLost(InteractionSourceLostEventArgs obj)
+#endif
         {
+#if UNITY_5
+            if (obj.state.source.sourceKind == InteractionSourceKind.Hand)
+#else
             if (obj.state.source.kind == InteractionSourceKind.Hand)
+#endif
             {
                 // Stop displaying the guidance indicator when the user's hand leaves the view.
                 RemoveTrackedHand(obj.state);
@@ -170,9 +210,15 @@ namespace HoloToolkit.Unity.InputModule
 
         protected override void OnDestroy()
         {
+#if UNITY_5
+            InteractionManager.SourceLost -= InteractionManager_InteractionSourceLost;
+            InteractionManager.SourceUpdated -= InteractionManager_InteractionSourceUpdated;
+            InteractionManager.SourceReleased -= InteractionManager_InteractionSourceReleased;
+#else
             InteractionManager.InteractionSourceLost -= InteractionManager_InteractionSourceLost;
             InteractionManager.InteractionSourceUpdated -= InteractionManager_InteractionSourceUpdated;
             InteractionManager.InteractionSourceReleased -= InteractionManager_InteractionSourceReleased;
+#endif
 
             base.OnDestroy();
         }

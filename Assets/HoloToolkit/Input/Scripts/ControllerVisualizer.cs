@@ -5,7 +5,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 #if UNITY_WSA
-using UnityEngine.XR.WSA.Input;
+#if UNITY_5
+    using UnityEngine.VR.WSA.Input;
+#else
+    using UnityEngine.XR.WSA.Input;
+#endif
 #if !UNITY_EDITOR
 using GLTF;
 using System.Collections;
@@ -87,14 +91,23 @@ namespace HoloToolkit.Unity.InputModule
                 Debug.Log("Running in the editor won't render the glTF models, and only one controller override is specified. Please set the " + ((LeftControllerOverride == null) ? "left" : "right") + " override on " + name + ".");
             }
 
+#if UNITY_5
+            InteractionManager.SourceDetected += InteractionManager_InteractionSourceDetected;
+#else
             InteractionManager.InteractionSourceDetected += InteractionManager_InteractionSourceDetected;
 #endif
+#endif
+#if UNITY_5
+            InteractionManager.SourceLost += InteractionManager_InteractionSourceLost;
+            InteractionManager.SourceUpdated += InteractionManager_InteractionSourceUpdated;
+#else
             InteractionManager.InteractionSourceLost += InteractionManager_InteractionSourceLost;
             InteractionManager.InteractionSourceUpdated += InteractionManager_InteractionSourceUpdated;
 #endif
+#endif
         }
 
-#if !UNITY_EDITOR && UNITY_WSA
+#if !UNITY_EDITOR && UNITY_WSA && ENABLE_WINMD_SUPPORT 
         /// <summary>
         /// When a controller is detected, the model is spawned and the controller object
         /// is added to the tracking dictionary.
@@ -195,9 +208,18 @@ namespace HoloToolkit.Unity.InputModule
 #endif
 
 #if UNITY_WSA
+#if UNITY_5
+        private void InteractionManager_InteractionSourceDetected(InteractionManager.SourceEventArgs obj)
+#else
         private void InteractionManager_InteractionSourceDetected(InteractionSourceDetectedEventArgs obj)
+#endif
         {
-            if (obj.state.source.kind == InteractionSourceKind.Controller && controllerDictionary != null && !controllerDictionary.ContainsKey(obj.state.source.id))
+#if UNITY_5
+            if (obj.state.source.sourceKind == InteractionSourceKind.Controller &&
+#else
+            if (obj.state.source.kind == InteractionSourceKind.Controller &&
+#endif
+                controllerDictionary != null && !controllerDictionary.ContainsKey(obj.state.source.id))
             {
                 GameObject controllerModelGameObject;
                 if (obj.state.source.handedness == InteractionSourceHandedness.Left && LeftControllerOverride != null)
@@ -222,10 +244,18 @@ namespace HoloToolkit.Unity.InputModule
         /// is removed from the tracking dictionary.
         /// </summary>
         /// <param name="obj">The source event args to be used to determine the controller model to be removed.</param>
+#if UNITY_5
+        private void InteractionManager_InteractionSourceLost(InteractionManager.SourceEventArgs obj)
+#else
         private void InteractionManager_InteractionSourceLost(InteractionSourceLostEventArgs obj)
+#endif
         {
             InteractionSource source = obj.state.source;
+#if UNITY_5
+            if (source.sourceKind == InteractionSourceKind.Controller)
+#else
             if (source.kind == InteractionSourceKind.Controller)
+#endif
             {
                 ControllerInfo controller;
                 if (controllerDictionary != null && controllerDictionary.TryGetValue(source.id, out controller))
@@ -237,12 +267,20 @@ namespace HoloToolkit.Unity.InputModule
             }
         }
 
+#if UNITY_5
+        private void InteractionManager_InteractionSourceUpdated(InteractionManager.SourceEventArgs obj)
+#else
         private void InteractionManager_InteractionSourceUpdated(InteractionSourceUpdatedEventArgs obj)
+#endif
         {
             ControllerInfo currentController;
             if (AnimateControllerModel && controllerDictionary != null && controllerDictionary.TryGetValue(obj.state.source.id, out currentController))
             {
+#if UNITY_5
+                currentController.AnimateSelect((float)obj.state.selectPressedValue);
+#else
                 currentController.AnimateSelect(obj.state.selectPressedAmount);
+#endif
 
                 if (obj.state.source.supportsGrasp)
                 {
@@ -254,24 +292,61 @@ namespace HoloToolkit.Unity.InputModule
                     currentController.AnimateMenu(obj.state.menuPressed);
                 }
 
-                if (obj.state.source.supportsThumbstick)
+                bool bSupportsThumbstick = false;
+                bool bSupportsTouchpad = false;
+#if UNITY_5
+                InteractionController ctrl;
+                if(obj.state.source.TryGetController(out ctrl))
                 {
-                    currentController.AnimateThumbstick(obj.state.thumbstickPressed, obj.state.thumbstickPosition);
+                    bSupportsThumbstick = ctrl.hasThumbstick;
+                    bSupportsTouchpad = ctrl.hasTouchpad;
+                }
+#else
+                bSupportsThumbstick = obj.state.source.supportsThumbstick;
+                bSupportsTouchpad = obj.state.source.supportsTouchpad;
+#endif
+
+                if (bSupportsThumbstick)
+                {
+                    currentController.AnimateThumbstick(
+#if UNITY_5
+                        obj.state.controllerProperties.thumbstickPressed,
+                        new Vector2((float)obj.state.controllerProperties.thumbstickX, (float)obj.state.controllerProperties.thumbstickY)
+#else
+                        obj.state.thumbstickPressed, 
+                        obj.state.thumbstickPosition
+#endif
+                        );
                 }
 
-                if (obj.state.source.supportsTouchpad)
+                if (bSupportsTouchpad)
                 {
-                    currentController.AnimateTouchpad(obj.state.touchpadPressed, obj.state.touchpadTouched, obj.state.touchpadPosition);
+                    currentController.AnimateTouchpad(
+#if UNITY_5
+                        obj.state.controllerProperties.touchpadPressed, obj.state.controllerProperties.touchpadTouched,
+                        new Vector2((float)obj.state.controllerProperties.touchpadX, (float)obj.state.controllerProperties.touchpadY)
+#else
+                        obj.state.touchpadPressed, obj.state.touchpadTouched, obj.state.touchpadPosition
+#endif
+                        );
                 }
 
                 Vector3 newPosition;
+#if UNITY_5
+                if (obj.state.sourcePose.TryGetPosition(out newPosition))
+#else
                 if (obj.state.sourcePose.TryGetPosition(out newPosition, InteractionSourceNode.Grip))
+#endif
                 {
                     currentController.gameObject.transform.localPosition = newPosition;
                 }
 
                 Quaternion newRotation;
+#if UNITY_5
+                if (obj.state.sourcePose.TryGetRotation(out newRotation))
+#else
                 if (obj.state.sourcePose.TryGetRotation(out newRotation, InteractionSourceNode.Grip))
+#endif
                 {
                     currentController.gameObject.transform.localRotation = newRotation;
                 }
@@ -297,7 +372,7 @@ namespace HoloToolkit.Unity.InputModule
         }
 #endif
 
-        public GameObject SpawnTouchpadVisualizer(Transform parentTransform)
+                public GameObject SpawnTouchpadVisualizer(Transform parentTransform)
         {
             GameObject touchVisualizer;
             if (TouchpadTouchedOverride != null)

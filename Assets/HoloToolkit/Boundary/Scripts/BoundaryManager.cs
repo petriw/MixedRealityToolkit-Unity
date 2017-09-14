@@ -3,8 +3,13 @@
 
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_5
+using UnityEngine.VR;
+using UnityEngine.VR.WSA;
+#else
 using UnityEngine.XR;
 using UnityEngine.XR.WSA;
+#endif
 
 namespace HoloToolkit.Unity.Boundary
 {
@@ -68,10 +73,12 @@ namespace HoloToolkit.Unity.Boundary
         private void SetBoundaryRendering()
         {
             // TODO: BUG: Unity: configured bool always returns false.
+#if !UNITY_5
             if (UnityEngine.Experimental.XR.Boundary.configured)
             {
                 UnityEngine.Experimental.XR.Boundary.visible = renderBoundary;
             }
+#endif
         }
 
         private void Awake()
@@ -92,13 +99,21 @@ namespace HoloToolkit.Unity.Boundary
             {
                 // Defaulting coordinate system to RoomScale in immersive headsets.
                 // This puts the origin 0,0,0 on the floor if a floor has been established during RunSetup via MixedRealityPortal
+#if UNITY_5
+                VRDevice.SetTrackingSpaceType(TrackingSpaceType.RoomScale);
+#else
                 XRDevice.SetTrackingSpaceType(TrackingSpaceType.RoomScale);
+#endif
             }
             else
             {
                 // Defaulting coordinate system to Stationary for HoloLens.
                 // This puts the origin 0,0,0 at the first place where the user started the application.
+#if UNITY_5
+                VRDevice.SetTrackingSpaceType(TrackingSpaceType.Stationary);
+#else
                 XRDevice.SetTrackingSpaceType(TrackingSpaceType.Stationary);
+#endif
             }
 
             if (FloorQuad != null && HolographicSettings.IsDisplayOpaque)
@@ -115,8 +130,13 @@ namespace HoloToolkit.Unity.Boundary
                 // TODO: BUG: Unity: TryGetDimensions does not return true either.
                 //if (UnityEngine.Experimental.XR.Boundary.TryGetDimensions(out dimensions,
                 //UnityEngine.Experimental.XR.Boundary.Type.TrackedArea))
+
+#if !UNITY_5
                 if (UnityEngine.Experimental.XR.Boundary.TryGetDimensions(out dimensions, 
                     UnityEngine.Experimental.XR.Boundary.Type.TrackedArea))
+#else
+                if(false)
+#endif
                 {
                     Debug.Log("Got dimensions of tracked area.");
                     if (dimensions != null)
@@ -167,7 +187,11 @@ namespace HoloToolkit.Unity.Boundary
             //    return;
             //}
 
+#if UNITY_5
+            if (VRDevice.GetTrackingSpaceType() != TrackingSpaceType.RoomScale)
+#else
             if (XRDevice.GetTrackingSpaceType() != TrackingSpaceType.RoomScale)
+#endif
             {
                 Debug.Log("No boundary for stationary scale experiences.");
                 return;
@@ -176,6 +200,7 @@ namespace HoloToolkit.Unity.Boundary
             boundaryBounds = new Bounds();
             // Get all the bounds setup by the user.
             var boundaryGeometry = new List<Vector3>(0);
+#if !UNITY_5
             if (UnityEngine.Experimental.XR.Boundary.TryGetGeometry(boundaryGeometry))
             {
                 if (boundaryGeometry.Count > 0)
@@ -187,6 +212,7 @@ namespace HoloToolkit.Unity.Boundary
                     }
                 }
             }
+#endif
 
             // Ensuring that we set height of the bounds volume to be say 10 feet tall.
             boundaryBounds.Encapsulate(new Vector3(0, boundaryHeight, 0));

@@ -4,4 +4,7 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/HoloToolkit-Examples/MotionControllers/Scenes/MotionControllers.unity
+    guid: aad1b6d9c49e3ad44b9cd9bd197f0303

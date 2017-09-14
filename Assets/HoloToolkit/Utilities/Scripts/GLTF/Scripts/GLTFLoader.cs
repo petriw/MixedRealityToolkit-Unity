@@ -490,10 +490,15 @@ namespace GLTF
 					var www = UnityWebRequest.Get(AbsolutePath(uri));
 					www.downloadHandler = new DownloadHandlerTexture();
 
-					yield return www.SendWebRequest();
+#if UNITY_5
+                    yield return www.Send();
+#else
+                    yield return www.SendWebRequest();
+#endif
 
-					// HACK to enable mipmaps :(
-					var tempTexture = DownloadHandlerTexture.GetContent(www);
+
+                    // HACK to enable mipmaps :(
+                    var tempTexture = DownloadHandlerTexture.GetContent(www);
 					if (tempTexture != null)
 					{
 						texture = new Texture2D(tempTexture.width, tempTexture.height, tempTexture.format, true);
@@ -542,9 +547,13 @@ namespace GLTF
 				{
 					var www = UnityWebRequest.Get(AbsolutePath(uri));
 
-					yield return www.SendWebRequest();
+#if UNITY_5
+                    yield return www.Send();
+#else
+                    yield return www.SendWebRequest();
+#endif
 
-					bufferData = www.downloadHandler.data;
+                    bufferData = www.downloadHandler.data;
 				}
 
 				_bufferCache[buffer] = bufferData;

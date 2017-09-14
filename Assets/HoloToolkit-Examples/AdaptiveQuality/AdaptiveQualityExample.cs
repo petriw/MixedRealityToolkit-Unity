@@ -8,9 +8,13 @@ public class AdaptiveQualityExample : MonoBehaviour
 
 	private void Update ()
 	{
-		text.text = string.Format("GPUTime:{0:N2}\nQualityLevel:{1}\nViewportScale:{2:N2}", 
-			GpuTiming.GetTime("Frame") * 1000.0f,
-			quality.QualityLevel,
-			UnityEngine.XR.XRSettings.renderViewportScale);
-	}
+        text.text = string.Format("GPUTime:{0:N2}\nQualityLevel:{1}\nViewportScale:{2:N2}",
+            GpuTiming.GetTime("Frame") * 1000.0f,
+            quality.QualityLevel,
+#if UNITY_5
+            UnityEngine.VR.VRSettings.renderViewportScale);
+#else
+            UnityEngine.XR.XRSettings.renderViewportScale);
+#endif
+    }
 }

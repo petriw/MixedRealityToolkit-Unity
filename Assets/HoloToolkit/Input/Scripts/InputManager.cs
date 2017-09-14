@@ -6,7 +6,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
 using UnityEngine.EventSystems;
+#if UNITY_5
+using UnityEngine.VR.WSA.Input;
+#else
 using UnityEngine.XR.WSA.Input;
+#endif
+
 
 namespace HoloToolkit.Unity.InputModule
 {
@@ -357,7 +362,13 @@ namespace HoloToolkit.Unity.InputModule
                 handler.OnInputClicked(casted);
             };
 
-        public void RaiseInputClicked(IInputSource source, uint sourceId, InteractionSourcePressType pressType, int tapCount, object tag = null)
+        public void RaiseInputClicked(IInputSource source, uint sourceId,
+#if UNITY_5
+            InteractionPressKind pressType,
+#else
+            InteractionSourcePressType pressType, 
+#endif
+            int tapCount, object tag = null)
         {
             // Create input event
             sourceClickedEventData.Initialize(source, sourceId, tag, pressType, tapCount);
@@ -375,7 +386,13 @@ namespace HoloToolkit.Unity.InputModule
                 handler.OnInputUp(casted);
             };
 
-        public void RaiseSourceUp(IInputSource source, uint sourceId, InteractionSourcePressType pressType, object tag = null)
+        public void RaiseSourceUp(IInputSource source, uint sourceId,
+#if UNITY_5
+            InteractionPressKind pressType,
+#else
+            InteractionSourcePressType pressType, 
+#endif
+            object tag = null)
         {
             // Create input event
             inputEventData.Initialize(source, sourceId, tag, pressType);
@@ -384,7 +401,12 @@ namespace HoloToolkit.Unity.InputModule
             HandleEvent(inputEventData, OnSourceUpEventHandler);
 
             // UI events
-            if (ShouldSendUnityUiEvents && (pressType == InteractionSourcePressType.Select))
+            if (ShouldSendUnityUiEvents && (pressType ==
+#if UNITY_5
+                InteractionPressKind.Select))
+#else
+                InteractionSourcePressType.Select))
+#endif
             {
                 PointerInputEventData pointerInputEventData = FocusManager.Instance.BorrowPointerEventData();
                 pointerInputEventData.InputSource = source;
@@ -402,7 +424,13 @@ namespace HoloToolkit.Unity.InputModule
                 handler.OnInputDown(casted);
             };
 
-        public void RaiseSourceDown(IInputSource source, uint sourceId, InteractionSourcePressType pressType, object tag = null)
+        public void RaiseSourceDown(IInputSource source, uint sourceId,
+#if UNITY_5
+            InteractionPressKind pressType,
+#else
+            InteractionSourcePressType pressType, 
+#endif
+            object tag = null)
         {
             // Create input event
             inputEventData.Initialize(source, sourceId, tag, pressType);
@@ -411,7 +439,12 @@ namespace HoloToolkit.Unity.InputModule
             HandleEvent(inputEventData, OnSourceDownEventHandler);
 
             // UI events
-            if (ShouldSendUnityUiEvents && (pressType == InteractionSourcePressType.Select))
+            if (ShouldSendUnityUiEvents && (pressType ==
+#if UNITY_5
+                InteractionPressKind.Select))
+#else
+                InteractionSourcePressType.Select))
+#endif
             {
                 PointerInputEventData pointerInputEventData = FocusManager.Instance.BorrowPointerEventData();
                 pointerInputEventData.InputSource = source;
@@ -670,7 +703,13 @@ namespace HoloToolkit.Unity.InputModule
                 handler.OnInputPositionChanged(casted);
             };
 
-        public void RaiseInputPositionChanged(IInputSource source, uint sourceId, InteractionSourcePressType pressType, Vector2 position)
+        public void RaiseInputPositionChanged(IInputSource source, uint sourceId,
+#if UNITY_5
+            InteractionPressKind pressType,
+#else
+            InteractionSourcePressType pressType, 
+#endif
+            Vector2 position)
         {
             // Create input event
             inputPositionEventData.Initialize(source, sourceId, pressType, position);
@@ -705,7 +744,12 @@ namespace HoloToolkit.Unity.InputModule
         public void RaiseTouchpadTouched(IInputSource source, uint sourceId, object tag = null)
         {
             // Create input event
-            inputEventData.Initialize(source, sourceId, tag, InteractionSourcePressType.Touchpad);
+            inputEventData.Initialize(source, sourceId, tag,
+#if UNITY_5
+                InteractionPressKind.Touchpad);
+#else
+                InteractionSourcePressType.Touchpad);
+#endif
 
             // Pass handler through HandleEvent to perform modal/fallback logic
             HandleEvent(inputEventData, OnTouchpadTouchedEventHandler);
@@ -721,7 +765,12 @@ namespace HoloToolkit.Unity.InputModule
         public void RaiseTouchpadReleased(IInputSource source, uint sourceId, object tag = null)
         {
             // Create input event
-            inputEventData.Initialize(source, sourceId, tag, InteractionSourcePressType.Touchpad);
+            inputEventData.Initialize(source, sourceId, tag,
+#if UNITY_5
+                InteractionPressKind.Touchpad);
+#else
+                InteractionSourcePressType.Touchpad);
+#endif
 
             // Pass handler through HandleEvent to perform modal/fallback logic
             HandleEvent(inputEventData, OnTouchpadReleasedEventHandler);

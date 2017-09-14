@@ -29,7 +29,11 @@ namespace HoloToolkit.Unity.InputModule
 
         private void Awake()
         {
+#if UNITY_5
+            if (UnityEngine.VR.VRDevice.isPresent)
+#else
             if (UnityEngine.XR.XRDevice.isPresent)
+#endif
             {
                 Destroy(gameObject);
             }
