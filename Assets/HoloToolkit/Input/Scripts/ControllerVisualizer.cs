@@ -368,7 +368,10 @@ namespace HoloToolkit.Unity.InputModule
             {
                 newControllerInfo.LoadInfo(controllerModelGameObject.GetComponentsInChildren<Transform>(), this);
             }
-            controllerDictionary.Add(id, newControllerInfo);
+            if (controllerDictionary.ContainsKey(id))
+                controllerDictionary[id] = newControllerInfo;
+            else
+                controllerDictionary.Add(id, newControllerInfo);
         }
 #endif
 
