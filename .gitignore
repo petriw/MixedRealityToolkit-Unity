@@ -17,6 +17,7 @@ project.lock.json
 # Visual Studio / MonoDevelop generated #
 # ===================================== #
 .vs/
+Build/
 ExportedObj/
 obj/
 *.svd
