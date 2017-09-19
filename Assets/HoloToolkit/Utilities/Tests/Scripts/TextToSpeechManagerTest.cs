@@ -62,7 +62,7 @@ public class TextToSpeechManagerTest : MonoBehaviour, IInputHandler
 #if UNITY_5
             UnityEngine.VR.WSA.Input.InteractionPressKind.Select)
 #else
-            InteractionSourcePressType.Select)
+            UnityEngine.XR.WSA.Input.InteractionSourcePressType.Select)
 #endif
         {
             GameObject obj = FocusManager.Instance.TryGetFocusedObject(eventData);
