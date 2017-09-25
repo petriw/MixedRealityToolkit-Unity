@@ -122,8 +122,15 @@ namespace HoloToolkit.Unity.Boundary
                 floorQuadInstance.transform.SetParent(gameObject.transform.parent);
 
 #if UNITY_EDITOR
-                // So the floor quad does not occlude in editor testing, draw it lower.
-                floorQuadInstance.transform.localPosition = new Vector3(0, -3, 0);
+    #if !UNITY_5
+                if (!XRDevice.isPresent)
+    #else
+                if (!VRDevice.isPresent)
+    #endif
+                {
+                    // So the floor quad does not occlude in editor testing, draw it lower.
+                    floorQuadInstance.transform.localPosition = new Vector3(0, -3, 0);
+                }
 #else
                 // Inside immersive headset draw floor quad at Y value of dimensions.
                 Vector3 dimensions;

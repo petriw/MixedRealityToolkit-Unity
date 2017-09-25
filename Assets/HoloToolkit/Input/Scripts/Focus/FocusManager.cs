@@ -278,6 +278,37 @@ namespace HoloToolkit.Unity.InputModule
             return GetPointer(pointingSource).End.Object;
         }
 
+        public bool TryGetPointingSource(BaseEventData eventData, out IPointingSource pointingSource)
+        {
+            for (int iPointer = 0; iPointer < pointers.Count; iPointer++)
+            {
+                PointerData pointer = pointers[iPointer];
+
+                if (pointer.PointingSource.OwnsInput(eventData))
+                {
+                    pointingSource = pointer.PointingSource;
+                    return true;
+                }
+            }
+
+            pointingSource = null;
+            return false;
+        }
+
+        public bool TryGetSinglePointer(out IPointingSource pointingSource)
+        {
+            if (pointers.Count == 1)
+            {
+                pointingSource = pointers[0].PointingSource;
+                return true;
+            }
+            else
+            {
+                pointingSource = null;
+                return false;
+            }
+        }
+
         /// <summary>
         /// Checks if exactly one pointer is registered and returns it if so.
         /// </summary>
