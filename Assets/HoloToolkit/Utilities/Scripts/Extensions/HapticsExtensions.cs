@@ -8,7 +8,7 @@
     using UnityEngine.XR.WSA.Input;
 #endif
 
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR && UNITY_WSA && ENABLE_WINMD_SUPPORT
 using System;
 using System.Collections.Generic;
 using Windows.Devices.Haptics;

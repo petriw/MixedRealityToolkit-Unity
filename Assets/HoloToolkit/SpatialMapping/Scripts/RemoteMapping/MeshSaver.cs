@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-#if !UNITY_EDITOR && UNITY_METRO
+#if !UNITY_EDITOR && UNITY_WSA && ENABLE_WINMD_SUPPORT
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Streams;
@@ -31,7 +31,7 @@ namespace HoloToolkit.Unity.SpatialMapping
         {
             get
             {
-#if !UNITY_EDITOR && UNITY_METRO
+#if !UNITY_EDITOR && UNITY_WSA && ENABLE_WINMD_SUPPORT
                 return ApplicationData.Current.RoamingFolder.Path;
 #else
                 return Application.persistentDataPath;
@@ -154,7 +154,7 @@ namespace HoloToolkit.Unity.SpatialMapping
         {
             Stream stream = null;
 
-#if !UNITY_EDITOR && UNITY_WSA
+#if !UNITY_EDITOR && UNITY_WSA && ENABLE_WINMD_SUPPORT
             Task<Task> task = Task<Task>.Factory.StartNew(
                             async () =>
                             {
@@ -182,7 +182,7 @@ namespace HoloToolkit.Unity.SpatialMapping
         {
             Stream stream = null;
 
-#if !UNITY_EDITOR && UNITY_WSA
+#if !UNITY_EDITOR && UNITY_WSA && ENABLE_WINMD_SUPPORT
             Task<Task> task = Task<Task>.Factory.StartNew(
                             async () =>
                             {

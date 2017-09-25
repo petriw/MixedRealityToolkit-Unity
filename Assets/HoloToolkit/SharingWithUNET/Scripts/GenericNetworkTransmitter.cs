@@ -6,7 +6,7 @@ using HoloToolkit.Unity;
 using System;
 using System.Collections.Generic;
 
-#if !UNITY_EDITOR
+#if !UNITY_EDITOR && UNITY_WSA && ENABLE_WINMD_SUPPORT
 using Windows.Networking.Sockets;
 using Windows.Storage.Streams;
 using Windows.Networking;

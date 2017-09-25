@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See LICENSE in the project root for license information.
 
-#if UNITY_METRO && !UNITY_EDITOR
+#if !UNITY_EDITOR && UNITY_WSA && ENABLE_WINMD_SUPPORT
 
 using System;
 using System.Collections.Generic;

@@ -3,7 +3,7 @@
 using System;
 using UnityEngine;
 
-#if !UNITY_EDITOR && UNITY_METRO
+#if !UNITY_EDITOR && UNITY_WSA && ENABLE_WINMD_SUPPORT
 using Windows.Foundation;
 using Windows.Media.SpeechSynthesis;
 using Windows.Storage.Streams;

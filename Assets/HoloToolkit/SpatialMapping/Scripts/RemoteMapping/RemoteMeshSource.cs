@@ -24,7 +24,7 @@ namespace HoloToolkit.Unity.SpatialMapping
         [Tooltip("The connection port on the machine to use.")]
         public int ConnectionPort = 11000;
 
-#if !UNITY_EDITOR && UNITY_METRO
+#if !UNITY_EDITOR && UNITY_WSA && ENABLE_WINMD_SUPPORT
         /// <summary>
         /// Tracks the network connection to the remote machine we are sending meshes to.
         /// </summary>
